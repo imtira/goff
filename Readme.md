@@ -20,6 +20,10 @@ And Goff will make everything good.
 
 A configuration langugae.
 
+## File Extension
+
+The standard file extension for Goff files is `.gf`.
+
 ## Syntax
 
 ```
