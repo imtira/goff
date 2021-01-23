@@ -1,0 +1,11 @@
+[package]
+name = "goff"
+version = "0.1.0"
+authors = ["tira <t1ra@protonmail.com>"]
+license = "MPL-2.0"
+respository = "https://github.com/imtira/goff"
+description = "Goff configuration language"
+readme = "Readme.md"
+edition = "2018"
+
+[dependencies]
