@@ -1,92 +1,92 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License,
+// v. 2.0. If a copy of the MPL was not distributed with this file, You can
+// obtain one at https://mozilla.org/MPL/2.0/.
+
+// TODO: Async?
+
+//! Goff reference implementation.
+#![feature(try_trait)]
+#![warn(clippy::all,
+        clippy::restriction,
+        clippy::pedantic,
+        clippy::cargo,
+        clippy::nursery)]
+#![allow(clippy::blanket_clippy_restriction_lints,
+         clippy::enum_glob_use,
+         clippy::implicit_return,
+         clippy::cargo_common_metadata,   // Blame Serde
+         clippy::multiple_crate_versions, // Blame Serde
+         clippy::wildcard_dependencies,   // Based, but blame Serde.
+         clippy::integer_arithmetic,
+         clippy::wildcard_enum_match_arm, // Might be good to avoid if possible
+         clippy::as_conversions,          // Should be removed asap?
+         clippy::panic_in_result_fn,      // Should be removed asap
+         clippy::cast_possible_wrap,      // Should be considered but not removed.
+                                          // Casts are only used in a safe context.
+         clippy::unimplemented )] // Should be removed asap
+use serde::Deserialize;
+
+/// Contains custom error types and implementations.
 mod error;
+/// Contains the actual deserialiser/parser implementation.
 mod serialize;
 
 use error::Error;
 
+#[inline]
+/// Deserialises the given Goff data as a str and returns it, deserialised to
+/// a given type.
+/// # Errors
+/// `from_str` may return almost any [`Error`](errors/enum.Error.html)
 pub fn from_str<'d, T>(inp: &'d str) -> Result<T, Error>
-where T: serialize::Deserialize<'de>,
+  where T: Deserialize<'d>,
 {
-
+  let mut deserializer = serialize::Deserializer::from_str(inp);
+  let t = T::deserialize(&mut deserializer)?;
+  Ok(t)
 }
 
 // Tests
 #[cfg(test)]
-mod tests {
-  use std::collections::HashMap;
+#[allow(clippy::unwrap_used)]
+mod tests
+{
+  use serde::Deserialize;
 
-  #[derive(Debug, Clone)]
-  struct Simple {
-    server: String,
-    use_proxy: bool,
-    timeout: u8,
-    proxy: Option<String>,
-    developer: Developer,
-    server_info: ServerInfo,
-  }
-
-  #[derive(Debug, Clone)]
-  struct Developer {
-    revision: f32,
-    license: String,
-    work_days: Vec<String>,
-    hours_worked: HashMap<String, f32>,
-  }
-
-  #[derive(Debug, Clone)]
-  struct ServerInfo {
-    http_cache: Server,
-    seedbox: Server,
-  }
-
-  #[derive(Debug, Clone)]
-  struct Server {
-     ip: String,
-     supports_ipv6: bool,
-     bandwidth_limit: Option<u32>,
-     cpus: u8,
-     location: String,
+  #[derive(Debug, Clone, PartialEq, Deserialize)]
+  struct Simple
+  {
+    string:    String,
+    int:       u8,
+    neg_int:   i8,
+    r#bool:    bool,
+    newline:   String,
+    escapes:   String,
+    multiline: String,
   }
 
   #[test]
-  fn simple() {
-    assert_eq!(
-      Simple {
-        server: "example.com".to_string(),
-        use_proxy: false,
-        timeout: 5,
-        proxy: None,
-        developer: Developer {
-          revision: 6.66,
-          license: "
-As long as you retain this notice you can do whatever you want with this stuff. If we meet some day,
-and you think this stuff is worth it, you can buy me a beer in return.
-          ".to_string(),
-          work_days: vec!["Monday".to_string(),
-                      "Tuesday".to_string(),
-                      "Wednesday".to_string()],
-          hours_worked:
-            [("Monday".to_string(), 8.),
-             ("Tuesday".to_string(), 7.5),
-             ("Wednesday".to_string(), 7.5)]
-            .iter().cloned().collect(),
-        },
-        server_info: ServerInfo {
-          http_cache: Server {
-            ip: "100.100.100.100".to_string(),
-            supports_ipv6: true,
-            bandwidth_limit: None,
-            cpus: 8,
-            location: "us-east-2".to_string(),
-          },
-          seedbox: Server {
-            ip: "200.200.200.200".to_string(),
-            supports_ipv6: false,
-            bandwidth_limit: None,
-            cpus: 4,
-            location: "us-east-1".to_string(),
-          }
-        }
-      },
-      super::from_str(simple_str));
+  fn simple()
+  {
+    let simple_str = "
+string    = 'foobar'
+int       = 1
+neg-int   = -1
+bool      = no
+newline   = 'foo\\nbar'
+escapes   = 'foo\\\'bar'
+multiline = '
+foo
+bar'
+    ";
+
+    assert_eq!(Simple { string:    "foobar".to_owned(),
+                        int:       1,
+                        neg_int:   -1,
+                        bool:      false,
+                        newline:   "foo\nbar".to_owned(),
+                        escapes:   "foo\\\'bar".to_owned(),
+                        multiline: "foo\nbar".to_owned(), },
+               super::from_str(simple_str).unwrap(),);
   }
 }

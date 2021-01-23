@@ -1,11 +1,23 @@
 [package]
 name = "goff"
 version = "0.1.0"
-authors = ["tira <t1ra@protonmail.com>"]
-license = "MPL-2.0"
-respository = "https://github.com/imtira/goff"
-description = "Goff configuration language"
-readme = "Readme.md"
 edition = "2018"
 
+authors = ["tira <t1ra@protonmail.com>"]
+license = "MPL-2.0"
+
+repository = "https://github.com/imtira/goff"
+homepage = "https://github.com/imtira/goff"
+documentation = "https://github.com/imtira/goff"
+description = "Goff configuration language"
+
+keywords = ["parser", "serde", "language", "serialization", "goff"]
+categories = ["config", "data-structures", "encoding", "parser-implementations"]
+
+readme = "Readme.md"
+
 [dependencies]
+serde =  "1.0.120"
+
+[dev-dependencies]
+serde = { version = "1.0.120", features = ["derive"] }

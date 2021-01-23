@@ -148,6 +148,26 @@ constructs under the names like `data`.
 A comment begins when the parser encounters two consecutive hyphens outside of a String.
 The parser should unconditionally ignore the rest of the line.
 
+#### Escape Sequence
+
+An escape sequence is matched inside of Strings. They always begin with a single backslash and
+are immediately followed by a valid UTF-8 character. If the sequence is in this list, it should be
+replaced in the parsed text with its equivalent value or the language's code for it.  
+
+| Escape sequence | Name                          | UTF-8 codepoint |
+| --------------- | ----------------------------- | --------------- |
+| `\n`            | Newline                       | `0x0A`          |
+| `\r`            | Carriage Return               | `0x0D`          |
+| `\t`            | Horizontal Tab                | `0x09`          |
+| `\\`            | Literal backslash             | `0x5C`          |
+| `\'`            | Literal single quotation mark | `0x27`          |
+
+Backslashes followed by a character not written here should be inserted literally into the output.
+
+When `\\` is encountered, a single literal `\` should be inserted into the output text. When `\'` is
+encountered, a literal `'` should be inserted into the output text, and the parser should continue
+to read the String.
+
 ### Type Representation
 
 Types are characterised by being valid data to assign a key's value to.
@@ -265,3 +285,11 @@ A Nothing is equivalent in many languages by types named `null` or `nil`. In lan
 types, they may be represented by an enum under names like `Nothing` or `None`. In languages
 demanding explicitly nullable types, members that are not explicitly marked as nullable but are
 represented by Nothing in the Goff file constitute an invalid Goff file.
+
+## Contributing
+
+Please run `cargo fmt` before committing. 
+
+## License
+
+See [license.txt](license.txt).
