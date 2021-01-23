@@ -9,7 +9,7 @@ license = "MPL-2.0"
 repository = "https://github.com/imtira/goff"
 homepage = "https://github.com/imtira/goff"
 documentation = "https://github.com/imtira/goff"
-description = "Goff configuration language"
+description = "Goff configuration language and reference serde implementation."
 
 keywords = ["parser", "serde", "language", "serialization", "goff"]
 categories = ["config", "data-structures", "encoding", "parser-implementations"]
