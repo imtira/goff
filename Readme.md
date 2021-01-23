@@ -7,7 +7,8 @@ and everything was good.
 and everything was good.
 
 But we grew tired of using JSON. We were upset that it was unfit for a task it was not designed for
- And everything wasn't so good anymore.
+
+And everything wasn't so good anymore.
 
 But we did not fix JSON. Some persevered, some moved to new languages. But these languages grew
 deranged. We did not just fix the flaws of JSON, but we overstepped.
@@ -18,7 +19,7 @@ And Goff will make everything good.
 
 # /ɡɒθ/
 
-A configuration langugae.
+A configuration language.
 
 ## File Extension
 
